@@ -21,14 +21,17 @@ pub use rsa2048::*;
 pub use rsa3072::*;
 
 #[cfg(any(feature = "tserialize", feature = "userialize"))]
-use sgx_serialize::{Deserialize, Serialize};
+use sgx_serialize::{Deserialize as SgxDeserialize, Serialize as SgxSerialize};
+
+use serde::{Deserialize, Serialize};
 
 #[repr(u32)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[cfg_attr(
     any(feature = "tserialize", feature = "userialize"),
-    derive(Deserialize, Serialize)
+    derive(SgxDeserialize, SgxSerialize)
 )]
+#[derive(Deserialize, Serialize)]
 enum RsaPrivateType {
     Type1 = 1,
     Type2 = 2,

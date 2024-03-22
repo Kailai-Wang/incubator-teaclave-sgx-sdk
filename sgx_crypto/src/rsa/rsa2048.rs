@@ -30,23 +30,35 @@ use sgx_types::types::{
 use sgx_types::types::{RSA2048_KEY_SIZE, RSA2048_PRI_EXP_SIZE, RSA2048_PUB_EXP_SIZE};
 
 #[cfg(any(feature = "tserialize", feature = "userialize"))]
-use sgx_serialize::{Deserialize, Serialize};
+use sgx_serialize::{Deserialize as SgxDeserialize, Serialize as SgxSerialize};
+
+use serde::{Deserialize, Serialize};
+use serde_big_array::BigArray;
 
 const RSA2048_DEFAULT_E: [u8; RSA2048_PUB_EXP_SIZE] = [0x01, 0x00, 0x00, 0x01]; // 16777217
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[cfg_attr(
     any(feature = "tserialize", feature = "userialize"),
-    derive(Deserialize, Serialize)
+    derive(SgxDeserialize, SgxSerialize)
 )]
+#[derive(Deserialize, Serialize)]
 pub struct Rsa2048KeyPair {
+    #[serde(with = "BigArray")]
     n: [u8; RSA2048_KEY_SIZE],
+    #[serde(with = "BigArray")]
     d: [u8; RSA2048_PRI_EXP_SIZE],
+    #[serde(with = "BigArray")]
     e: [u8; RSA2048_PUB_EXP_SIZE],
+    #[serde(with = "BigArray")]
     p: [u8; RSA2048_KEY_SIZE / 2],
+    #[serde(with = "BigArray")]
     q: [u8; RSA2048_KEY_SIZE / 2],
+    #[serde(with = "BigArray")]
     dmp1: [u8; RSA2048_KEY_SIZE / 2],
+    #[serde(with = "BigArray")]
     dmq1: [u8; RSA2048_KEY_SIZE / 2],
+    #[serde(with = "BigArray")]
     iqmp: [u8; RSA2048_KEY_SIZE / 2],
     privtype: RsaPrivateType,
 }
@@ -308,16 +320,25 @@ unsafe impl BytewiseEquality for Rsa2048KeyPair {}
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[cfg_attr(
     any(feature = "tserialize", feature = "userialize"),
-    derive(Deserialize, Serialize)
+    derive(SgxDeserialize, SgxSerialize)
 )]
+#[derive(Deserialize, Serialize)]
 pub struct Rsa2048PrivateKey {
+    #[serde(with = "BigArray")]
     n: [u8; RSA2048_KEY_SIZE],
+    #[serde(with = "BigArray")]
     d: [u8; RSA2048_PRI_EXP_SIZE],
+    #[serde(with = "BigArray")]
     e: [u8; RSA2048_PUB_EXP_SIZE],
+    #[serde(with = "BigArray")]
     p: [u8; RSA2048_KEY_SIZE / 2],
+    #[serde(with = "BigArray")]
     q: [u8; RSA2048_KEY_SIZE / 2],
+    #[serde(with = "BigArray")]
     dmp1: [u8; RSA2048_KEY_SIZE / 2],
+    #[serde(with = "BigArray")]
     dmq1: [u8; RSA2048_KEY_SIZE / 2],
+    #[serde(with = "BigArray")]
     iqmp: [u8; RSA2048_KEY_SIZE / 2],
     privtype: RsaPrivateType,
 }
@@ -573,10 +594,13 @@ unsafe impl BytewiseEquality for Rsa2048PrivateKey {}
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[cfg_attr(
     any(feature = "tserialize", feature = "userialize"),
-    derive(Deserialize, Serialize)
+    derive(SgxDeserialize, SgxSerialize)
 )]
+#[derive(Deserialize, Serialize)]
 pub struct Rsa2048PublicKey {
+    #[serde(with = "BigArray")]
     n: [u8; RSA2048_KEY_SIZE],
+    #[serde(with = "BigArray")]
     e: [u8; RSA2048_PUB_EXP_SIZE],
 }
 

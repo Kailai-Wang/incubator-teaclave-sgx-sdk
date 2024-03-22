@@ -42,6 +42,8 @@ sgx_crypto_sys = { path = "./sgx_crypto_sys" }
 sgx_trts = { path = "../sgx_trts", optional = true }
 
 [dependencies]
+serde-big-array = "0.5"
+serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
 sgx_rand = { path = "../sgx_rand", default-features = false, features = ["urand"], optional = true }
 sgx_tserialize = { path = "../sgx_serialize", default-features = false, features = ["tserialize", "derive"], package = 'sgx_serialize', optional = true }
 sgx_userialize = { path = "../sgx_serialize", default-features = false, features = ["userialize", "derive"], package = 'sgx_serialize', optional = true }
