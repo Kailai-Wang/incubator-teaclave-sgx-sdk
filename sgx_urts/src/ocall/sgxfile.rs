@@ -38,6 +38,8 @@ pub unsafe extern "C" fn u_sgxfs_open_ocall(
         return ptr::null_mut();
     }
 
+    println!("size address = {:x}", size as u32);
+
     let name = match CStr::from_ptr(name).to_str() {
         Ok(name) => name,
         Err(_) => {
