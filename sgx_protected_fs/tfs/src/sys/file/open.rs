@@ -55,6 +55,8 @@ impl FileInner {
         println!("cp 1");
         let key_gen = FsKeyGen::new(mode)?;
 
+        println!("cp 1.5");
+
         Self::check_file_exist(opts, mode, path)?;
         println!("cp 2");
         let mut host_file = HostFile::open(path, opts.readonly())?;

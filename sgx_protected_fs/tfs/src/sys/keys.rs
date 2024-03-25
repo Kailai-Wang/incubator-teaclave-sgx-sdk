@@ -128,6 +128,7 @@ pub enum MetadataKey {
 impl MetadataKey {
     #[allow(unused_variables)]
     fn new(user_key: Option<Key128bit>, key_policy: Option<KeyPolicy>) -> FsResult<MetadataKey> {
+        println!("inside ctor");
         if let Some(user_key) = user_key {
             Ok(Self::UserKey(user_key))
         } else {
