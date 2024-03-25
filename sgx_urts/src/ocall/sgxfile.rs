@@ -254,6 +254,8 @@ pub unsafe extern "C" fn u_sgxfs_exists_ocall(
         }
     };
 
+    println!("is_exists address = {:x}", is_exists as u32);
+
     *is_exists = 0;
     match ufs::try_exists(Path::new(name)) {
         Ok(exists) => {

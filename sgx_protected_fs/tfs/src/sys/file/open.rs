@@ -198,6 +198,7 @@ impl FileInner {
     }
 
     fn check_file_exist(opts: &OpenOptions, mode: &OpenMode, path: &Path) -> FsResult {
+        println!("r-1");
         let is_exist = host::try_exists(path)?;
 
         println!("r0");
