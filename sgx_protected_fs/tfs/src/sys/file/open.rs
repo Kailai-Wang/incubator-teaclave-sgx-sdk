@@ -200,16 +200,22 @@ impl FileInner {
     fn check_file_exist(opts: &OpenOptions, mode: &OpenMode, path: &Path) -> FsResult {
         let is_exist = host::try_exists(path)?;
 
+        println!("r0");
         if opts.read || mode.import_key().is_some() {
+            println!("r1");
             ensure!(is_exist, eos!(ENOENT));
         }
         if opts.write && is_exist {
+            println!("r2");
             // try to delete existing file
             host::remove(path)?;
+            println!("r3");
             // re-check
             let is_exist = host::try_exists(path)?;
             ensure!(!is_exist, eos!(EACCES));
         }
+
+        println!("r4");
 
         Ok(())
     }
