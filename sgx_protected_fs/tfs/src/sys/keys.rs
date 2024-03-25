@@ -134,11 +134,13 @@ impl MetadataKey {
         } else {
             cfg_if! {
                 if #[cfg(feature = "tfs")] {
+                    println!("create autokey");
                     Ok(Self::AutoKey {
                         report: Box::new(*Report::get_self()),
                         key_policy,
                     })
                 } else {
+                    println!("error");
                     Err(eos!(ENOTSUP))
                 }
             }
