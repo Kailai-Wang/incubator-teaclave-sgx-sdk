@@ -48,16 +48,19 @@ impl FileInner {
         mode: &OpenMode,
         cache_size: Option<usize>,
     ) -> FsResult<Self> {
+        println!("cp 0");
         let cache_size = Self::check_cache_size(cache_size)?;
         let file_name = path.file_name().ok_or(EINVAL)?.to_str().ok_or(EINVAL)?;
         Self::check_open_param(path, file_name, opts, mode)?;
-
+        println!("cp 1");
         let key_gen = FsKeyGen::new(mode)?;
 
         Self::check_file_exist(opts, mode, path)?;
-
+        println!("cp 2");
         let mut host_file = HostFile::open(path, opts.readonly())?;
         let file_size = host_file.size();
+
+        println!("cp 3, file_size = {}", file_size);
 
         let mut recovery_file_name = file_name.to_owned();
         recovery_file_name.push_str("_recovery");
