@@ -29,6 +29,7 @@
  *
  */
 
+
 #include "sgx_tcrypto.h"
 #include "ippcp.h"
 #include "ipp_wrapper.h"
@@ -234,7 +235,7 @@ sgx_status_t sgx_rijndael128GCM_decrypt(const sgx_aes_gcm_128bit_key_t *p_key, c
     return SGX_SUCCESS;
 }
 
-sgx_status_t sgx_aes_gcm128_init(const uint8_t *key, const uint8_t *iv, uint32_t iv_len, const uint8_t *aad,
+sgx_status_t sgx_aes_gcm128_enc_init(const uint8_t *key, const uint8_t *iv, uint32_t iv_len, const uint8_t *aad,
     uint32_t aad_len, sgx_aes_state_handle_t* aes_gcm_state)
 {
     if ((aad_len >= INT_MAX) || (key == NULL) || (iv_len != SGX_AESGCM_IV_SIZE) || ((aad_len > 0) && (aad == NULL))
@@ -296,28 +297,6 @@ sgx_status_t sgx_aes_gcm128_enc_get_mac(uint8_t *mac, sgx_aes_state_handle_t aes
     return ret;
 }
 
-sgx_status_t sgx_aes_gcm128_dec_verify_mac(uint8_t *mac, sgx_aes_state_handle_t aes_gcm_state)
-{
-    if ((mac == NULL) || (aes_gcm_state == NULL))
-    {
-        return SGX_ERROR_INVALID_PARAMETER;
-    }
-    uint8_t l_tag[SGX_AESGCM_MAC_SIZE];
-    IppStatus status = ippsAES_GCMGetTag(l_tag, SGX_AESGCM_MAC_SIZE, (IppsAES_GCMState*)aes_gcm_state);
-    if (status != ippStsNoErr) {
-        return SGX_ERROR_UNEXPECTED;
-    }
-
-    if (consttime_memequal(mac, &l_tag, SGX_AESGCM_MAC_SIZE) == 0)
-    {
-        memset_s(&l_tag, SGX_AESGCM_MAC_SIZE, 0, SGX_AESGCM_MAC_SIZE);
-        return SGX_ERROR_MAC_MISMATCH;
-    }
-    
-    memset_s(&l_tag, SGX_AESGCM_MAC_SIZE, 0, SGX_AESGCM_MAC_SIZE);
-    return SGX_SUCCESS;
-}
-
 
 //aes_gcm encryption fini function
 sgx_status_t sgx_aes_gcm_close(sgx_aes_state_handle_t aes_gcm_state)
@@ -343,19 +322,6 @@ sgx_status_t sgx_aes_gcm128_enc_update(uint8_t *p_src, uint32_t src_len,
         return SGX_ERROR_INVALID_PARAMETER;
     }
     if (ippsAES_GCMEncrypt(p_src, p_dst, src_len, (IppsAES_GCMState*)aes_gcm_state) != ippStsNoErr) {
-        return SGX_ERROR_UNEXPECTED;
-    }
-    return SGX_SUCCESS;
-}
-
-sgx_status_t sgx_aes_gcm128_dec_update(uint8_t *p_src, uint32_t src_len,
-    uint8_t *p_dst, sgx_aes_state_handle_t aes_gcm_state)
-{
-    if ((aes_gcm_state == NULL) || (p_src == NULL) || (p_dst == NULL) || (src_len >= INT_MAX) || (src_len == 0))
-    {
-        return SGX_ERROR_INVALID_PARAMETER;
-    }
-    if (ippsAES_GCMDecrypt(p_src, p_dst, src_len, (IppsAES_GCMState*)aes_gcm_state) != ippStsNoErr) {
         return SGX_ERROR_UNEXPECTED;
     }
     return SGX_SUCCESS;

@@ -48,25 +48,25 @@
 sgx_status_t sgx_hmac_sha256_msg(const unsigned char *p_src, int src_len, const unsigned char *p_key, int key_len,
                unsigned char *p_mac, int mac_len)
 {
-    if ((p_src == NULL) || (p_key == NULL) || (p_mac == NULL) || (src_len <= 0) || (key_len <= 0) || (mac_len <= 0))  {
-        return SGX_ERROR_INVALID_PARAMETER;
-    }
-    
-    sgx_status_t ret = SGX_ERROR_UNEXPECTED;
-    IppStatus ipp_ret = ippStsNoErr;
+	if ((p_src == NULL) || (p_key == NULL) || (p_mac == NULL) || (src_len <= 0) || (key_len <= 0) || (mac_len <= 0))  {
+		return SGX_ERROR_INVALID_PARAMETER;
+	}
+	
+	sgx_status_t ret = SGX_ERROR_UNEXPECTED;
+	IppStatus ipp_ret = ippStsNoErr;
 
-    do {
-        ipp_ret = ippsHMACMessage_rmf(p_src, src_len, (const Ipp8u*)p_key, key_len, p_mac, mac_len, ippsHashMethod_SHA256_TT());
-        ERROR_BREAK(ipp_ret);
+	do {
+		ipp_ret = ippsHMACMessage_rmf(p_src, src_len, (const Ipp8u*)p_key, key_len, p_mac, mac_len, ippsHashMethod_SHA256_TT());
+		ERROR_BREAK(ipp_ret);
 
-        ret = SGX_SUCCESS;
-    } while (0);
+		ret = SGX_SUCCESS;
+	} while (0);
 
-    if (ret != SGX_SUCCESS) {
-        memset_s(p_mac, mac_len, 0, mac_len); 
-    }
-    
-    return ret;
+	if (ret != SGX_SUCCESS) {
+		memset_s(p_mac, mac_len, 0, mac_len); 
+	}
+	
+	return ret;
 }
 
 /* Allocates and initializes HMAC state
@@ -76,39 +76,39 @@ sgx_status_t sgx_hmac_sha256_msg(const unsigned char *p_src, int src_len, const 
 *           int key_len - Key length
 *   Output: sgx_hmac_state_handle_t *p_hmac_handle - Pointer to the initialized HMAC state handle
 */
-sgx_status_t sgx_hmac_sha256_init(const unsigned char *p_key, int key_len, sgx_hmac_state_handle_t *p_hmac_handle)
+sgx_status_t sgx_hmac256_init(const unsigned char *p_key, int key_len, sgx_hmac_state_handle_t *p_hmac_handle)
 {
     if ((p_key == NULL) || (key_len <= 0) || (p_hmac_handle == NULL)) {
         return SGX_ERROR_INVALID_PARAMETER;
     }
 
-    IppStatus ipp_ret = ippStsNoErr;
-    sgx_status_t ret = SGX_ERROR_UNEXPECTED;
-    IppsHMACState_rmf* pState = NULL;
+	IppStatus ipp_ret = ippStsNoErr;
+	sgx_status_t ret = SGX_ERROR_UNEXPECTED;
+	IppsHMACState_rmf* pState = NULL;
 
-    int size = 0;
+	int size = 0;
 
-    do {
-        ipp_ret = ippsHMACGetSize_rmf(&size);
-        ERROR_BREAK(ipp_ret);
-        pState = (IppsHMACState_rmf*) malloc(size);
-        if (NULL == pState)
-        {
-            ret = SGX_ERROR_OUT_OF_MEMORY;
-            break;
-        }
-        ipp_ret = ippsHMACInit_rmf(p_key, key_len, pState, ippsHashMethod_SHA256_TT());
-        ERROR_BREAK(ipp_ret);
+	do {
+		ipp_ret = ippsHMACGetSize_rmf(&size);
+		ERROR_BREAK(ipp_ret);
+		pState = (IppsHMACState_rmf*) malloc(size);
+		if (NULL == pState)
+		{
+			ret = SGX_ERROR_OUT_OF_MEMORY;
+			break;
+		}
+		ipp_ret = ippsHMACInit_rmf(p_key, key_len, pState, ippsHashMethod_SHA256_TT());
+		ERROR_BREAK(ipp_ret);
 
-        *p_hmac_handle = pState;
-        ret = SGX_SUCCESS;
-    } while (0);
+		*p_hmac_handle = pState;
+		ret = SGX_SUCCESS;
+	} while (0);
 
-    if (ret != SGX_SUCCESS) {
-        sgx_hmac_sha256_close((sgx_hmac_state_handle_t)pState);
-    }
-    
-    return ret;
+	if (ret != SGX_SUCCESS) {
+		sgx_hmac256_close((sgx_hmac_state_handle_t)pState);
+	}
+	
+	return ret;
 }
 
 /* Updates HMAC hash calculation based on the input message
@@ -118,18 +118,18 @@ sgx_status_t sgx_hmac_sha256_init(const unsigned char *p_key, int key_len, sgx_h
 *	        int src_len - Length of input stream to be hashed
 *	        sgx_hmac_state_handle_t hmac_handle - Handle to the HMAC state
 */
-sgx_status_t sgx_hmac_sha256_update(const uint8_t *p_src, int src_len, sgx_hmac_state_handle_t hmac_handle)
+sgx_status_t sgx_hmac256_update(const uint8_t *p_src, int src_len, sgx_hmac_state_handle_t hmac_handle)
 {
-    if ((p_src == NULL) || (src_len <= 0) || (hmac_handle == NULL)) {
-        return SGX_ERROR_INVALID_PARAMETER;
-    }
-    IppStatus ipp_ret = ippStsNoErr;
+	if ((p_src == NULL) || (src_len <= 0) || (hmac_handle == NULL)) {
+		return SGX_ERROR_INVALID_PARAMETER;
+	}
+	IppStatus ipp_ret = ippStsNoErr;
 
-    ipp_ret = ippsHMACUpdate_rmf(p_src, (int)src_len, (IppsHMACState_rmf*)hmac_handle);
-    if (ipp_ret != ippStsNoErr) {
-        return SGX_ERROR_UNEXPECTED;
-    }
-    return SGX_SUCCESS;
+	ipp_ret = ippsHMACUpdate_rmf(p_src, (int)src_len, (IppsHMACState_rmf*)hmac_handle);
+	if (ipp_ret != ippStsNoErr) {
+		return SGX_ERROR_UNEXPECTED;
+	}
+	return SGX_SUCCESS;
 }
 
 /* Returns calculated hash
@@ -139,20 +139,20 @@ sgx_status_t sgx_hmac_sha256_update(const uint8_t *p_src, int src_len, sgx_hmac_
 *	        int hash_len - Expected MAC length
 *   Output: unsigned char *p_hash - Resultant hash from HMAC operation
 */
-sgx_status_t sgx_hmac_sha256_final(unsigned char *p_hash, int hash_len, sgx_hmac_state_handle_t hmac_handle)
+sgx_status_t sgx_hmac256_final(unsigned char *p_hash, int hash_len, sgx_hmac_state_handle_t hmac_handle)
 {
     if ((p_hash == NULL) || (hash_len <= 0) || (hmac_handle == NULL)) {
         return SGX_ERROR_INVALID_PARAMETER;
     }
-    IppStatus ipp_ret = ippStsNoErr;
+	IppStatus ipp_ret = ippStsNoErr;
 
-    ipp_ret = ippsHMACFinal_rmf(p_hash, hash_len, (IppsHMACState_rmf*)hmac_handle);
-    if (ipp_ret != ippStsNoErr) {
-        memset_s(p_hash, hash_len, 0, hash_len);
-        return SGX_ERROR_UNEXPECTED;
-    }
+	ipp_ret = ippsHMACFinal_rmf(p_hash, hash_len, (IppsHMACState_rmf*)hmac_handle);
+	if (ipp_ret != ippStsNoErr) {
+		memset_s(p_hash, hash_len, 0, hash_len);
+		return SGX_ERROR_UNEXPECTED;
+	}
 
-    return SGX_SUCCESS;
+	return SGX_SUCCESS;
 }
 
 /* Clean up and free the HMAC state
@@ -160,12 +160,12 @@ sgx_status_t sgx_hmac_sha256_final(unsigned char *p_hash, int hash_len, sgx_hmac
 *   Return: sgx_status_t  - SGX_SUCCESS or failure as defined in sgx_error.h
 *   Input:  sgx_hmac_state_handle_t hmac_handle  - Handle to the HMAC state
 * */
-sgx_status_t sgx_hmac_sha256_close(sgx_hmac_state_handle_t hmac_handle)
+sgx_status_t sgx_hmac256_close(sgx_hmac_state_handle_t hmac_handle)
 {
     if (hmac_handle == NULL) {
         return SGX_ERROR_INVALID_PARAMETER;
     }
-    
+	
     int size = 0;
     IppStatus ipp_ret = ippsHMACGetSize_rmf(&size);
     if (ipp_ret != ippStsNoErr)

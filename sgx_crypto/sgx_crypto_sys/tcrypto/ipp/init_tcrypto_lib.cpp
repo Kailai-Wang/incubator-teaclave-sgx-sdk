@@ -29,16 +29,17 @@
  *
  */
 
+
 #include "sgx_tcrypto.h"
 #include "ippcp.h"
 #include "se_cpu_feature.h"
 #include "se_cdefs.h"
 
 // add a version to tcrypto.
-// SGX_ACCESS_VERSION(tcrypto, 1)
+SGX_ACCESS_VERSION(tcrypto, 1)
+
 
 extern "C" sgx_status_t init_ipp_cpuid(uint64_t cpu_feature_indicator);
-
 /* Crypto Library Initialization
 * Parameters:
 * 	Return: sgx_status_t  - SGX_SUCCESS or failure as defined sgx_error.h
@@ -49,3 +50,4 @@ extern "C" sgx_status_t sgx_init_crypto_lib(uint64_t cpu_feature_indicator, uint
 
     return init_ipp_cpuid(cpu_feature_indicator);
 }
+

@@ -29,7 +29,9 @@
  *
  */
 
+
 #include "ipp_wrapper.h"
+
 
 sgx_status_t sgx_rsa3072_sign_ex(const uint8_t * p_data,
     uint32_t data_size,
@@ -165,6 +167,7 @@ sgx_status_t sgx_rsa3072_sign_ex(const uint8_t * p_data,
     default: return SGX_ERROR_UNEXPECTED;
     }
 }
+
 
 sgx_status_t sgx_rsa3072_sign(const uint8_t * p_data,
     uint32_t data_size,

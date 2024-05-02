@@ -43,6 +43,7 @@
 #include "sgx_trts.h"
 #include "ipp_wrapper.h"
 
+
 sgx_status_t sgx_create_rsa_key_pair(int n_byte_size, int e_byte_size, unsigned char *p_n, unsigned char *p_d, unsigned char *p_e,
     unsigned char *p_p, unsigned char *p_q, unsigned char *p_dmp1,
     unsigned char *p_dmq1, unsigned char *p_iqmp)
@@ -489,10 +490,8 @@ sgx_status_t sgx_rsa_priv_decrypt_sha256(const void* rsa_key, unsigned char* pou
 sgx_status_t sgx_create_rsa_priv1_key(int n_byte_size, int e_byte_size, int d_byte_size, const unsigned char *le_n, const unsigned char *le_e,
     const unsigned char *le_d, void **new_pri_key1)
 {
-    (void)(e_byte_size);
-    (void)(le_e);
-    if (n_byte_size <= 0 || d_byte_size <= 0 || new_pri_key1 == NULL ||
-        le_n == NULL || le_d == NULL) {
+    if (n_byte_size <= 0 || e_byte_size <= 0 || d_byte_size <= 0 || new_pri_key1 == NULL ||
+        le_n == NULL || le_e == NULL || le_d == NULL) {
         return SGX_ERROR_INVALID_PARAMETER;
     }
 

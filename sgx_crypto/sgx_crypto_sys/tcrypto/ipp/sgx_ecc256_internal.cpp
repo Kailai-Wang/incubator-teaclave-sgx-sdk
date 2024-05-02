@@ -29,8 +29,13 @@
  *
  */
 
+
+
+
 #include "ipp_wrapper.h"
 #include "sgx_ecc256_internal.h"
+
+
 
 /* Computes a point with scalar multiplication based on private B key (local) and remote public Ga Key
  * Parameters:

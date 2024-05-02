@@ -29,7 +29,9 @@
  *
  */
 
+
 #include "ipp_wrapper.h"
+
 
 const uint32_t sgx_nistp256_r[] = {
     0xFC632551, 0xF3B9CAC2, 0xA7179E84, 0xBCE6FAAD, 0xFFFFFFFF, 0xFFFFFFFF,

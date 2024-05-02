@@ -29,35 +29,20 @@
  *
  */
 
-#ifndef _SGX_ECC256_INTERNAL_H
-#define _SGX_ECC256_INTERNAL_H
+#include "se_version.h"
 
-#include "sgx_tcrypto.h"
+#define __CONCAT(x, y) x/**/y
 
-typedef struct _sgx_ec256_shared_point_t
-{
-    uint8_t x[SGX_ECP256_KEY_SIZE];
-    uint8_t y[SGX_ECP256_KEY_SIZE];
-} sgx_ec256_shared_point_t;
+#define SGX_TCRYPTO_VERSION_STR  __CONCAT("SGX_TCRYPTO_VERSION_", STRFILEVER)
 
 #ifdef __cplusplus
-extern "C"
+extern "C" {
 #endif
 
-/* NOTE: The function is for internal use ONLY
- *
- * Computes a point with scalar multiplication based on private B key (local) and remote public Ga Key 
- * Parameters:
- *   Return: sgx_status_t - SGX_SUCCESS or failure as defined in sgx_error.h
- *   Inputs: sgx_ecc_state_handle_t ecc_handle - Handle to the ECC crypto system
- *           sgx_ec256_private_t *p_private_b - Pointer to the local private key
- *           sgx_ec256_public_t *p_public_ga - Pointer to the remote public key
- *   Output: sgx_ec256_shared_point_t *p_shared_key - Pointer to the target shared point
- */
-sgx_status_t SGXAPI sgx_ecc256_compute_shared_point(sgx_ec256_private_t *p_private_b,
-                                                     sgx_ec256_public_t *p_public_ga,
-                                                     sgx_ec256_shared_point_t *p_shared_key,
-                                                     sgx_ecc_state_handle_t ecc_handle);
+__attribute__((visibility("default")))
+char sgx_tcrypto_version[] = SGX_TCRYPTO_VERSION_STR;
 
-
+#ifdef __cplusplus
+}
 #endif
+

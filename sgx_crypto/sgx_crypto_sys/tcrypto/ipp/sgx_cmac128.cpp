@@ -29,11 +29,12 @@
  *
  */
 
+
 #include "sgx_tcrypto.h"
 #include "ippcp.h"
-#include "ipp_wrapper.h"
 #include "stdlib.h"
 #include "string.h"
+
 
 /* Message Authentication - Rijndael 128 CMAC
 * Parameters:
