@@ -85,7 +85,7 @@ sgx_status_t SGXAPI sgx_self_target(sgx_target_info_t *target_info);
  * Purpose: Software verification for  the input report
  *
  *  Paramters:
- *      report - [IN] ponter to the cryptographic report to be verified.
+ *      report - [IN] pointer to the cryptographic report to be verified.
  *
  *  Return value:
  *      sgx_status_t  - SGX_SUCCESS or failure as defined in sgx_error.h.

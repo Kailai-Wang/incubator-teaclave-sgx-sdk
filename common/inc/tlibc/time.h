@@ -1,5 +1,5 @@
-/*  $OpenBSD: time.h,v 1.18 2006/01/06 18:53:04 millert Exp $   */
-/*  $NetBSD: time.h,v 1.9 1994/10/26 00:56:35 cgd Exp $ */
+/*	$OpenBSD: time.h,v 1.18 2006/01/06 18:53:04 millert Exp $	*/
+/*	$NetBSD: time.h,v 1.9 1994/10/26 00:56:35 cgd Exp $	*/
 
 /*
  * Copyright (c) 1989 The Regents of the University of California.
@@ -35,7 +35,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *  @(#)time.h  5.12 (Berkeley) 3/9/91
+ *	@(#)time.h	5.12 (Berkeley) 3/9/91
  */
 
 #ifndef _TIME_H_
@@ -43,8 +43,6 @@
 
 #include <sys/cdefs.h>
 #include <sys/_types.h>
-#include <sys/struct_timespec.h>
-#include <sys/struct_timeval.h>
 
 #ifndef NULL
 #ifdef __cplusplus
@@ -57,7 +55,6 @@
 #if !defined (_CLOCK_T_DEFINED_) && !defined (_CLOCK_T_DEFINED)
 #define _CLOCK_T_DEFINED_
 #define _CLOCK_T_DEFINED
-typedef __clockid_t     clockid_t;
 typedef __clock_t   clock_t;
 #endif
 
@@ -65,12 +62,6 @@ typedef __clock_t   clock_t;
 #define _TIME_T_DEFINED_
 #define _TIME_T_DEFINED
 typedef __time_t    time_t;
-#endif
-
-#if !defined (_SUSECONDS_T_DEFINED_) && !defined (_SUSECONDS_T_DEFINED_)
-#define _SUSECONDS_T_DEFINED_
-#define _SUSECONDS_T_DEFINED_
-typedef __suseconds_t    suseconds_t;
 #endif
 
 #if !defined (_SIZE_T_DEFINED_) && !defined (_SIZE_T_DEFINED)
@@ -102,21 +93,12 @@ __BEGIN_DECLS
 double _TLIBC_CDECL_ difftime(time_t, time_t);
 char * _TLIBC_CDECL_ asctime(const struct tm *);
 size_t _TLIBC_CDECL_ strftime(char *, size_t, const char *, const struct tm *);
-struct tm * _TLIBC_CDECL_ gmtime (const time_t *);
-time_t _TLIBC_CDECL_ timegm(struct tm *);
 
 /*
  * Non-C99
  */
 char * _TLIBC_CDECL_ asctime_r(const struct tm *, char *);
-struct tm * _TLIBC_CDECL_ gmtime_r (const time_t *__restrict, struct tm *__restrict);
-
-// ocall
-int nanosleep(const struct timespec *, struct timespec *);
-int clock_gettime(clockid_t, struct timespec *);
-clock_t clock(void);
-time_t time(time_t *);
 
 __END_DECLS
 
-#endif /* _TIME_H_ */
+#endif /* !_TIME_H_ */

@@ -1,5 +1,5 @@
-/*  $OpenBSD: float.h,v 1.3 2008/07/21 20:50:54 martynas Exp $  */
-/*  $NetBSD: float.h,v 1.8 1995/06/20 20:45:37 jtc Exp $    */
+/* $OpenBSD: float.h,v 1.3 2008/07/21 20:50:54 martynas Exp $ */
+/* $NetBSD: float.h,v 1.8 1995/06/20 20:45:37 jtc Exp $ */
 
 /*
  * Copyright (c) 1989 Regents of the University of California.
@@ -43,7 +43,7 @@
 #define FLT_ROUNDS      1        /* addition rounding: near */
 #define DECIMAL_DIG     21       /* max precision in decimal digits */
 
-// NOTE: FLT_EVAL_METHOD is -1 under FREEBSD x86.
+// NOTE: FLT_EVAL_METHOD is -1 under FREEBSD x86. 
 #ifdef __i386__
 #define FLT_EVAL_METHOD 2        /* long double */
 #else

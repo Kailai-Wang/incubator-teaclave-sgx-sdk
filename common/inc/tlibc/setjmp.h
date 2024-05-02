@@ -1,4 +1,4 @@
-/*  $NetBSD: setjmp.h,v 1.26 2011/11/05 09:27:06 joerg Exp $    */
+/*	$NetBSD: setjmp.h,v 1.26 2011/11/05 09:27:06 joerg Exp $	*/
 
 /*-
  * Copyright (c) 1990, 1993
@@ -33,7 +33,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *  @(#)setjmp.h    8.2 (Berkeley) 1/21/94
+ *	@(#)setjmp.h	8.2 (Berkeley) 1/21/94
  */
 
 #ifndef _SETJMP_H_
@@ -47,13 +47,13 @@
 #define _BSD_JBSLOT_T_ long
 #endif
 
-#define _JBLEN 8
+#define _JBLEN 8 
 
 typedef _BSD_JBSLOT_T_ jmp_buf[_JBLEN] _JB_ATTRIBUTES;
 
 #include <sys/cdefs.h>
 #define __returns_twice __attribute__((__returns_twice__))
-#define __dead
+#define __dead 
 
 
 __BEGIN_DECLS
@@ -61,5 +61,5 @@ int setjmp(jmp_buf) __returns_twice;
 void longjmp(jmp_buf, int) __dead;
 __END_DECLS
 
-#endif /* _SETJMP_H_ */
+#endif /* !_SETJMP_H_ */
 

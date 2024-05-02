@@ -40,7 +40,6 @@
 #include "sgx_defs.h"
 #include "sgx_key.h"
 #include "sgx_report.h"
-#include "metadata.h"
 
 #include <stddef.h>
 
@@ -77,6 +76,8 @@ typedef struct _sgx_kss_config_t
 extern "C" {
 #endif
 
+typedef uint8_t sgx_launch_token_t[1024];
+
 /* Convenient macro to be passed to sgx_create_enclave(). */
 #if !defined(NDEBUG) || defined(EDEBUG)
 #define SGX_DEBUG_FLAG 1
@@ -84,21 +85,26 @@ extern "C" {
 #define SGX_DEBUG_FLAG 0
 #endif
 
-sgx_status_t SGXAPI rsgx_create_enclave(const char *file_name,
-                                        const int debug,
-                                        sgx_enclave_id_t *enclave_id,
-                                        sgx_misc_attribute_t *misc_attr);
+sgx_status_t SGXAPI sgx_create_enclave(const char *file_name, 
+                                       const int debug, 
+                                       sgx_launch_token_t *launch_token, 
+                                       int *launch_token_updated, 
+                                       sgx_enclave_id_t *enclave_id, 
+                                       sgx_misc_attribute_t *misc_attr);
 
 
-sgx_status_t SGXAPI rsgx_create_enclave_ex(const char * file_name,
-                                           const int debug,
-                                           sgx_enclave_id_t * enclave_id,
-                                           sgx_misc_attribute_t * misc_attr,
-                                           const uint32_t ex_features,
-                                           const void* ex_features_p[32]);
+
+sgx_status_t SGXAPI sgx_create_enclave_ex(const char * file_name, 
+                                          const int debug, 
+                                          sgx_launch_token_t * launch_token, 
+                                          int * launch_token_updated, 
+                                          sgx_enclave_id_t * enclave_id, 
+                                          sgx_misc_attribute_t * misc_attr,  
+                                          const uint32_t ex_features, 
+                                          const void* ex_features_p[32]);
 
 
-sgx_status_t SGXAPI rsgx_create_enclave_from_buffer_ex(
+sgx_status_t SGXAPI sgx_create_enclave_from_buffer_ex(
                                           uint8_t *buffer,
                                           size_t buffer_size,
                                           const int debug,
@@ -107,21 +113,24 @@ sgx_status_t SGXAPI rsgx_create_enclave_from_buffer_ex(
                                           const uint32_t ex_features,
                                           const void* ex_features_p[32]);
  
+ 
 
-sgx_status_t SGXAPI rsgx_destroy_enclave(const sgx_enclave_id_t enclave_id);
 
-sgx_status_t SGXAPI rsgx_get_target_info(const sgx_enclave_id_t enclave_id, sgx_target_info_t* target_info);
 
-sgx_status_t SGXAPI rsgx_get_metadata(const char* enclave_file, metadata_t *metadata);
+sgx_status_t SGXAPI sgx_create_encrypted_enclave(
+                        const char *file_name,
+                        const int debug,
+                        sgx_launch_token_t *launch_token,
+                        int *launch_token_updated,
+                        sgx_enclave_id_t *enclave_id,
+                        sgx_misc_attribute_t *misc_attr,
+                        uint8_t* sealed_key);
 
-/* rsgx_uget_enclave_mode()
- *
- * Return Value:
- *      1 - HW mode
- *      2 - SIM mode
- *      3 - HYPER mode
-*/
-int SGXAPI rsgx_get_enclave_mode(void);
+sgx_status_t SGXAPI sgx_destroy_enclave(const sgx_enclave_id_t enclave_id);
+
+sgx_status_t SGXAPI sgx_get_target_info(
+	const sgx_enclave_id_t enclave_id,
+	sgx_target_info_t* target_info);
 
 #ifdef __cplusplus
 }

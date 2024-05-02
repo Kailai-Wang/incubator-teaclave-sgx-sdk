@@ -32,7 +32,7 @@
 #ifndef _CPUID_H_
 #define _CPUID_H_
 
-#include "cpuid_gnu.h"
+#include "linux/cpuid_gnu.h"
 
 
 #endif /* _CPUID_H_ */

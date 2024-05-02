@@ -35,16 +35,16 @@
 #include "sgx.h"
 #include "arch.h"
 
-/* Attention: 
+/* Attention:
   * if the following alignment requirement changes, go to selib to
   * review the memory allocation of sgx_create_report and sgx_get_key.
   */
-#define TARGET_INFO_ALIGN_SIZE            512
-#define REPORT_DATA_ALIGN_SIZE            128
-#define REPORT_ALIGN_SIZE                 512
-#define KEY_REQUEST_ALIGN_SIZE            512
-#define REPORT2_MAC_STRUCT_ALIGN_SIZE     256
-#define KEY_ALIGN_SIZE                    16
+#define TARGET_INFO_ALIGN_SIZE  512
+#define REPORT_DATA_ALIGN_SIZE  128
+#define REPORT_ALIGN_SIZE       512
+#define KEY_REQUEST_ALIGN_SIZE  512
+#define REPORT2_MAC_STRUCT_ALIGN_SIZE    256
+#define KEY_ALIGN_SIZE          16
 
 #define BIT_ERROR(x)            (1 << (x))
 
@@ -74,24 +74,17 @@ struct ms_tcs
 extern "C" {
 #endif
 
-
-void * sgx_get_image_base(void);
-size_t sgx_get_image_size(void);
-
-void * sgx_get_heap_base(void);
-size_t sgx_get_heap_size(void);
-size_t sgx_get_heap_min_size(void);
-
-void * sgx_get_rsrvmem_base(void);
-size_t sgx_get_rsrvmem_size(void);
-size_t sgx_get_rsrvmem_min_size(void);
-uint32_t sgx_get_rsrvmm_default_perm(void);
-
-size_t get_stack_guard(void);
-
-int sgx_apply_epc_pages(void *start_address, size_t page_number);
-int sgx_trim_epc_pages(void *start_address, size_t page_number);
-
+int do_ereport(const sgx_target_info_t *target_info, const sgx_report_data_t *report_data, sgx_report_t *report);
+int do_everifyreport2(const sgx_report2_mac_struct_t *report2_mac_struct);
+int do_egetkey(const sgx_key_request_t *key_request, sgx_key_128bit_t *key);
+uint32_t do_rdrand(uint32_t *rand);
+int do_eaccept(const sec_info_t *, size_t);
+int do_eacceptcopy(const sec_info_t *, size_t, size_t);
+int do_emodpe(const sec_info_t*, size_t);
+sgx_status_t do_add_thread(void *ms);
+int is_dynamic_thread(void *tcs);
+int is_dynamic_thread_exist(void);
+uint32_t get_dynamic_stack_max_page(void);
 #ifdef __cplusplus
 }
 #endif

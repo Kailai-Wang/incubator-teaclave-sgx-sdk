@@ -29,6 +29,10 @@
  *
  */
 
+
+
+
+
 #ifndef _SGX_SPINLOCK_H_
 #define _SGX_SPINLOCK_H_
 
@@ -50,4 +54,4 @@ uint32_t SGXAPI sgx_spin_unlock(sgx_spinlock_t *lock);
 }
 #endif
 
-#endif /* _SGX_SPINLOCK_H_ */
+#endif /* !_SGX_SPINLOCK_H_ */

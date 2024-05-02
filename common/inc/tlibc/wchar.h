@@ -1,5 +1,5 @@
-/*  $OpenBSD: wchar.h,v 1.11 2010/07/24 09:58:39 guenther Exp $ */
-/*  $NetBSD: wchar.h,v 1.16 2003/03/07 07:11:35 tshiozak Exp $  */
+/*	$OpenBSD: wchar.h,v 1.11 2010/07/24 09:58:39 guenther Exp $	*/
+/*	$NetBSD: wchar.h,v 1.16 2003/03/07 07:11:35 tshiozak Exp $	*/
 
 /*-
  * Copyright (c)1999 Citrus Project,
@@ -128,16 +128,16 @@ wchar_t *   _TLIBC_CDECL_ wmemcpy(wchar_t *, const wchar_t *, size_t);
 wchar_t *   _TLIBC_CDECL_ wmemmove(wchar_t *, const wchar_t *, size_t);
 wchar_t *   _TLIBC_CDECL_ wmemset(wchar_t *, wchar_t, size_t);
 
+int         _TLIBC_CDECL_ swprintf(wchar_t *, size_t, const wchar_t *, ...);
+int         _TLIBC_CDECL_ vswprintf(wchar_t *, size_t, const wchar_t *, __va_list);
+
 long double         _TLIBC_CDECL_ wcstold (const wchar_t *, wchar_t **);
 long long           _TLIBC_CDECL_ wcstoll (const wchar_t *, wchar_t **, int);
 unsigned long long  _TLIBC_CDECL_ wcstoull (const wchar_t *, wchar_t **, int);
-
-int         _TLIBC_CDECL_ swprintf(wchar_t *, size_t, const wchar_t *, ...);
-int         _TLIBC_CDECL_ vswprintf(wchar_t *, size_t, const wchar_t *, __va_list);
 
 /* leagcy version of wcsstr */
 wchar_t *   _TLIBC_CDECL_ wcswcs(const wchar_t *, const wchar_t *);
 
 __END_DECLS
 
-#endif /* _WCHAR_H_ */
+#endif /* !_WCHAR_H_ */

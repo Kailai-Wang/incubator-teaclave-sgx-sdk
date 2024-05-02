@@ -36,6 +36,7 @@
 #include <stdint.h>
 #include "se_cpu_feature_defs_ext.h"
 
+
 #ifdef __cplusplus
 extern "C" uint64_t g_cpu_feature_indicator;
 #else
@@ -43,5 +44,6 @@ extern uint64_t g_cpu_feature_indicator;
 #endif
 
 #define TEST_CPU_HAS_RDRAND (g_cpu_feature_indicator & CPU_FEATURE_RDRND)
+
 
 #endif

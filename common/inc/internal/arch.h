@@ -40,8 +40,8 @@
 #include "sgx_report2.h"
 #include "sgx_tcrypto.h"
 
-#define SE_PAGE_SIZE  0x1000
-#define SE_PAGE_SHIFT 12
+
+#define SE_PAGE_SIZE 0x1000
 #define TCS_SIZE SE_PAGE_SIZE
 
 #pragma pack(push, 1)
@@ -65,15 +65,8 @@ typedef struct _secs_t
     PADDED_POINTER(void,        base);          /* (  8) Base address of enclave */
     uint32_t                    ssa_frame_size; /* ( 16) size of 1 SSA frame in pages */
     sgx_misc_select_t           misc_select;    /* ( 20) Which fields defined in SSA.MISC */
-#ifdef SE_HYPER
-    #define SECS_RESERVED1_LENGTH 16
-#else
-    #define SECS_RESERVED1_LENGTH 24
-#endif
+#define SECS_RESERVED1_LENGTH 24
     uint8_t                     reserved1[SECS_RESERVED1_LENGTH];  /* ( 24) reserved */
-#ifdef SE_HYPER
-    uint64_t                    ms_buf_size;    /* ( 40) Marshalling buffer size for each TCS */
-#endif
     sgx_attributes_t            attributes;     /* ( 48) ATTRIBUTES Flags Field */
     sgx_measurement_t           mr_enclave;     /* ( 64) Integrity Reg 0 - Enclave measurement */
 #define SECS_RESERVED2_LENGTH 32
@@ -131,6 +124,8 @@ typedef struct _exit_info_t
 #define SE_VECTOR_BP    3
 #define SE_VECTOR_BR    5
 #define SE_VECTOR_UD    6
+#define SE_VECTOR_GP    13
+#define SE_VECTOR_PF    14
 #define SE_VECTOR_MF    16
 #define SE_VECTOR_AC    17
 #define SE_VECTOR_XM    19
@@ -162,6 +157,15 @@ typedef struct _ssa_gpr_t
     uint64_t    fs;                     /* (168) FS register */
     uint64_t    gs;                     /* (176) GS register */
 } ssa_gpr_t;
+
+typedef struct _misc_exinfo
+{
+    uint64_t maddr; // address for #PF, #GP.
+    uint32_t errcd;
+    uint32_t reserved;
+} misc_exinfo_t;
+
+#define MISC_BYTE_SIZE sizeof(misc_exinfo_t)
 
 typedef uint64_t si_flags_t;
 

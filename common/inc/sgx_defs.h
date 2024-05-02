@@ -39,6 +39,7 @@
 #ifdef linux
   #undef linux
 #endif
+#define SGX_CXX_NATIVE_HEADER(header)   <stdc++/linux/header>
 
 #define SGX_CDECL
 #define SGX_STDCALL
@@ -52,4 +53,4 @@
 
 #define SGX_NOCONVENTION /* Empty.  No calling convention specified. */
 
-#endif /* _SGX_DEFS_H_ */
+#endif /* !_SGX_DEFS_H_ */

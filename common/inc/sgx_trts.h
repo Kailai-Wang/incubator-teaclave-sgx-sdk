@@ -33,22 +33,13 @@
 #define _SGX_TRTS_H_
 
 #include "sgx_error.h"
+#include "stddef.h"
 #include "sgx_defs.h"
-#include <stddef.h>
-#include <stdint.h>
+#include "stdint.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/* sgx_get_enclave_mode()
- *
- * Return Value:
- *      1 - HW mode
- *      2 - SIM mode
- *      3 - HYPER mode
-*/
-int SGXAPI sgx_get_enclave_mode(void);
 
 /* sgx_is_within_enclave()
  * Parameters:

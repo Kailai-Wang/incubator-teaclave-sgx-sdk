@@ -1,4 +1,4 @@
-/*  $OpenBSD: complex.h,v 1.3 2010/07/24 22:17:03 guenther Exp $    */
+/*	$OpenBSD: complex.h,v 1.3 2010/07/24 22:17:03 guenther Exp $	*/
 /*
  * Copyright (c) 2008 Martynas Venckus <martynas@openbsd.org>
  *
@@ -16,7 +16,7 @@
  */
 
 #ifndef _COMPLEX_H_
-#define _COMPLEX_H_
+#define	_COMPLEX_H_
 
 #include <sys/cdefs.h>
 
@@ -25,21 +25,21 @@
  */
 #ifdef __GNUC__
 #if __STDC_VERSION__ < 199901
-#define _Complex    __complex__
+#define _Complex	__complex__
 #endif
-#define _Complex_I  1.0fi
+#define _Complex_I	1.0fi
 #elif defined(lint)
-#define _Complex_I  1.0fi
+#define _Complex_I	1.0fi
 #endif
 
-#define complex     _Complex
+#define complex		_Complex
 
 /* XXX switch to _Imaginary_I */
 #undef I
-#define I           _Complex_I
+#define I		_Complex_I
 
 __BEGIN_DECLS
-/*
+/* 
  * Double versions of C99 functions
  */
 double complex cacos(double complex);
@@ -69,7 +69,7 @@ double creal(double complex);
  */
 double complex clog10(double complex);
 
-/*
+/* 
  * Float versions of C99 functions
  */
 float complex cacosf(float complex);
@@ -99,7 +99,7 @@ float crealf(float complex);
  */
 float complex clog10f(float complex);
 
-/*
+/* 
  * Long double versions of C99 functions
  */
 long double complex cacosl(long double complex);
@@ -131,4 +131,4 @@ long double complex clog10l(long double complex);
 
 __END_DECLS
 
-#endif /* _COMPLEX_H_ */
+#endif /* !_COMPLEX_H_ */

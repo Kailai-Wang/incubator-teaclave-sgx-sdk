@@ -1,5 +1,5 @@
-/*      $OpenBSD: stdlib.h,v 1.47 2010/05/18 22:24:55 tedu Exp $ */
-/*      $NetBSD: stdlib.h,v 1.25 1995/12/27 21:19:08 jtc Exp $   */
+/*	$OpenBSD: stdlib.h,v 1.47 2010/05/18 22:24:55 tedu Exp $	*/
+/*	$NetBSD: stdlib.h,v 1.25 1995/12/27 21:19:08 jtc Exp $	*/
 
 /*-
 * Copyright (c) 1990 The Regents of the University of California.
@@ -29,7 +29,7 @@
 * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 * SUCH DAMAGE.
 *
-*       @(#)stdlib.h    5.13 (Berkeley) 6/4/91
+*	@(#)stdlib.h	5.13 (Berkeley) 6/4/91
 */
 
 #ifndef _STDLIB_H_
@@ -99,6 +99,12 @@ long    _TLIBC_CDECL_ labs(long);
 ldiv_t  _TLIBC_CDECL_ ldiv(long, long);
 void *  _TLIBC_CDECL_ malloc(size_t);
 void *  _TLIBC_CDECL_ memalign(size_t, size_t);
+#ifndef __cplusplus
+int     _TLIBC_CDECL_ posix_memalign(void **, size_t, size_t);
+#else
+int     _TLIBC_CDECL_ posix_memalign(void **, size_t, size_t) throw ();
+#endif
+void *  _TLIBC_CDECL_ aligned_alloc(size_t, size_t);
 void    _TLIBC_CDECL_ qsort(void *, size_t, size_t, int (*)(const void *, const void *));
 void *  _TLIBC_CDECL_ realloc(void *, size_t);
 double  _TLIBC_CDECL_ strtod(const char *, char **);
@@ -130,7 +136,6 @@ size_t  _TLIBC_CDECL_ wcstombs(char *, const wchar_t *, size_t);
 /*
  * Deprecated C99.
  */
-_TLIBC_DEPRECATED_FUNCTION_(int     _TLIBC_CDECL_, atexit, void (_TLIBC_CDECL_ *)(void));
 _TLIBC_DEPRECATED_FUNCTION_(int     _TLIBC_CDECL_, rand, void);
 _TLIBC_DEPRECATED_FUNCTION_(void    _TLIBC_CDECL_, srand, unsigned);
 _TLIBC_DEPRECATED_FUNCTION_(void    _TLIBC_CDECL_, exit, int);
@@ -148,11 +153,6 @@ void *  _TLIBC_CDECL_ alloca(size_t);
  */
 //_TLIBC_DEPRECATED_FUNCTION_(void _TLIBC_CDECL_, _exit, int);
 
-// ocall
-int setenv(const char *, const char *, int);
-int unsetenv(const char *);
-char * getenv(const char *, char *, size_t);
-
 __END_DECLS
 
-#endif /* _STDLIB_H_ */
+#endif /* !_STDLIB_H_ */

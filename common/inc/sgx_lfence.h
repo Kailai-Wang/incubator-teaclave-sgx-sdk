@@ -44,4 +44,5 @@ extern void __builtin_ia32_lfence(void);
 }
 #endif
 
-#endif /* _SGX_LFENCE_H_ */
+#endif /* !_SGX_LFENCE_H_ */
+

@@ -42,6 +42,8 @@
 
 #define SGX_DH_MAC_SIZE 16
 
+#define SGX_DH_SESSION_DATA_SIZE 200
+
 typedef struct _sgx_dh_msg1_t
 {
     sgx_ec256_public_t  g_a;     /* the Endian-ness of Ga is Little-Endian */
@@ -89,17 +91,11 @@ typedef enum _sgx_dh_session_role_t
     SGX_DH_SESSION_RESPONDER
 } sgx_dh_session_role_t;
 
-#pragma pack(pop)
-
-#pragma pack(push, 64)
-#define SGX_DH_SESSION_DATA_SIZE 256
-
 typedef struct _sgx_dh_session_t
 {
     uint8_t sgx_dh_session[SGX_DH_SESSION_DATA_SIZE];
 } sgx_dh_session_t;
 #pragma pack(pop)
-
 #ifdef __cplusplus
 extern "C" {
 #endif

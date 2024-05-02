@@ -74,4 +74,4 @@
 # define LONG_BIT   32
 #endif
 
-#endif /* _SYS_LIMITS_H_ */
+#endif /* !_SYS_LIMITS_H_ */

@@ -31,9 +31,6 @@
 
 #ifndef SGX_PCL_GUID_H
 #define SGX_PCL_GUID_H
-
-#include <stdint.h>
-
 /*
  * GUID enables coupling of PCL lib (e.g. libsgx_pcl.a) and sealed blob
  * Before the PCL unseals the sealed blob, the PCL must verify the AAD 

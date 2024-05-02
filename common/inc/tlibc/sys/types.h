@@ -1,5 +1,5 @@
-/*  $OpenBSD: types.h,v 1.31 2008/03/16 19:42:57 otto Exp $ */
-/*  $NetBSD: types.h,v 1.29 1996/11/15 22:48:25 jtc Exp $   */
+/*	$OpenBSD: types.h,v 1.31 2008/03/16 19:42:57 otto Exp $	*/
+/*	$NetBSD: types.h,v 1.29 1996/11/15 22:48:25 jtc Exp $	*/
 
 /*-
  * Copyright (c) 1982, 1986, 1991, 1993
@@ -34,7 +34,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *  @(#)types.h 8.4 (Berkeley) 1/21/94
+ *	@(#)types.h	8.4 (Berkeley) 1/21/94
  */
 
 #ifndef _SYS_TYPES_H_
@@ -123,19 +123,6 @@ typedef __ssize_t   ssize_t;
 #ifndef _OFF_T_DEFINED_
 #define _OFF_T_DEFINED_
 typedef __off_t     off_t;
-typedef __off64_t   off64_t;
 #endif
 
-typedef __dev_t     dev_t;
-typedef __ino_t     ino_t;
-typedef __ino64_t   ino64_t;
-typedef __mode_t    mode_t;
-typedef __nlink_t   nlink_t;
-typedef __uid_t     uid_t;
-typedef __gid_t     gid_t;
-typedef __pid_t     pid_t;
-typedef __blksize_t blksize_t;
-typedef __blkcnt_t      blkcnt_t;
-typedef __blkcnt64_t    blkcnt64_t;
-
-#endif /* _SYS_TYPES_H_ */
+#endif /* !_SYS_TYPES_H_ */

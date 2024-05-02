@@ -1,5 +1,5 @@
-/*  $OpenBSD: cdefs.h,v 1.34 2012/08/14 20:11:37 matthew Exp $  */
-/*  $NetBSD: cdefs.h,v 1.16 1996/04/03 20:46:39 christos Exp $  */
+/*	$OpenBSD: cdefs.h,v 1.34 2012/08/14 20:11:37 matthew Exp $	*/
+/*	$NetBSD: cdefs.h,v 1.16 1996/04/03 20:46:39 christos Exp $	*/
 
 /*
  * Copyright (c) 1991, 1993
@@ -32,7 +32,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *  @(#)cdefs.h 8.7 (Berkeley) 1/21/94
+ *	@(#)cdefs.h	8.7 (Berkeley) 1/21/94
  */
 
 #ifndef _SYS_CDEFS_H_
@@ -47,7 +47,7 @@
 # define __END_DECLS
 #endif
 
-#if defined(__STDC__) || defined(__cplusplus)
+#if defined(__STDC__) || defined(__cplusplus) 
 # define __CONCAT(x,y)  x ## y
 # define __STRING(x)    #x
 #else
@@ -65,7 +65,7 @@
 #endif
 
 /* Calling Convention: cdecl */
-#define _TLIBC_CDECL_
+#define _TLIBC_CDECL_      
 
 /* Thread Directive */
 #define _TLIBC_THREAD_     /* __thread */
@@ -83,7 +83,7 @@
 #endif
 
 /* Static analysis for printf format strings.
- * _MSC_PRINTF_FORMAT_: MSVC SAL annotation for specifying format strings.
+ * _MSC_PRINTF_FORMAT_: MSVC SAL annotation for specifying format strings. 
  * _GCC_PRINTF_FORMAT_(x, y): GCC declaring attribute for checking format strings.
  *   x - index of the format string. In C++ non-static method, index 1 is reseved for 'this'.
  *   y - index of first variadic agrument in '...'.
@@ -122,11 +122,11 @@
  *	  larger code.
  */
 #if defined(__GNUC__) && __GNUC_PREREQ__(2, 96)
-#define __predict_true(exp)     __builtin_expect(((exp) != 0), 1)
-#define __predict_false(exp)    __builtin_expect(((exp) != 0), 0)
+#define __predict_true(exp)	__builtin_expect(((exp) != 0), 1)
+#define __predict_false(exp)	__builtin_expect(((exp) != 0), 0)
 #else
-#define __predict_true(exp)     ((exp) != 0)
-#define __predict_false(exp)    ((exp) != 0)
+#define __predict_true(exp)	((exp) != 0)
+#define __predict_false(exp)	((exp) != 0)
 #endif
 
-#endif /* _SYS_CDEFS_H_ */
+#endif /* !_SYS_CDEFS_H_ */

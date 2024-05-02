@@ -38,27 +38,47 @@
 
 typedef uintptr_t sgx_thread_t;
 
+typedef struct _sgx_thread_queue_t
+{
+    sgx_thread_t        m_first;  /* first element */
+    sgx_thread_t        m_last;   /* last element */
+} sgx_thread_queue_t;
+
 /* Mutex */
 typedef struct _sgx_thread_mutex_t
 {
+    size_t              m_refcount;
     uint32_t            m_control;
-    void                *m_mutex;
+    volatile uint32_t   m_lock;   /* use sgx_spinlock_t */
+    sgx_thread_t        m_owner;
+    sgx_thread_queue_t  m_queue;
 } sgx_thread_mutex_t;
 
 /* read write lock */
 typedef struct _sgx_thread_rwlock_t
 {
-    void                *m_rwlock;
+    uint32_t            m_reader_count;  /*number of readers holding the lock*/
+    uint32_t            m_writers_waiting; /*number of writers waiting for the lock*/
+    volatile uint32_t   m_lock;          /* use sgx_spinlock_t */
+    sgx_thread_t        m_owner;         /* owner of the lock - must be a writer*/
+    sgx_thread_queue_t  m_reader_queue;  /* readers waiting */
+    sgx_thread_queue_t  m_writer_queue;  /* writers waiting */
 } sgx_thread_rwlock_t;
 
 #define SGX_THREAD_T_NULL   ((sgx_thread_t)(NULL))
 
 #define SGX_THREAD_MUTEX_NONRECURSIVE   0x01
 #define SGX_THREAD_MUTEX_RECURSIVE      0x02
-#define SGX_THREAD_NONRECURSIVE_MUTEX_INITIALIZER  {SGX_THREAD_MUTEX_NONRECURSIVE, SGX_THREAD_T_NULL}
-#define SGX_THREAD_RECURSIVE_MUTEX_INITIALIZER  {SGX_THREAD_MUTEX_RECURSIVE, SGX_THREAD_T_NULL}
-#define SGX_THREAD_MUTEX_INITIALIZER  SGX_THREAD_NONRECURSIVE_MUTEX_INITIALIZER
-#define SGX_THREAD_LOCK_INITIALIZER  {SGX_THREAD_T_NULL}
+#define SGX_THREAD_NONRECURSIVE_MUTEX_INITIALIZER \
+            {0, SGX_THREAD_MUTEX_NONRECURSIVE, 0, SGX_THREAD_T_NULL, {SGX_THREAD_T_NULL, SGX_THREAD_T_NULL}}
+#define SGX_THREAD_RECURSIVE_MUTEX_INITIALIZER \
+            {0, SGX_THREAD_MUTEX_RECURSIVE, 0, SGX_THREAD_T_NULL, {SGX_THREAD_T_NULL, SGX_THREAD_T_NULL}}
+#define SGX_THREAD_MUTEX_INITIALIZER \
+            SGX_THREAD_NONRECURSIVE_MUTEX_INITIALIZER
+
+#define SGX_THREAD_LOCK_INITIALIZER \
+            {0, 0, 0, SGX_THREAD_T_NULL, {SGX_THREAD_T_NULL, SGX_THREAD_T_NULL}, {SGX_THREAD_T_NULL, SGX_THREAD_T_NULL}}
+
 
 
 typedef struct _sgx_thread_mutex_attr_t
@@ -74,10 +94,11 @@ typedef struct _sgx_thread_rwlock_attr_t
 /* Condition Variable */
 typedef struct _sgx_thread_cond_t
 {
-    void                *m_cond;
+    volatile uint32_t   m_lock;   /* use sgx_spinlock_t */
+    sgx_thread_queue_t  m_queue;
 } sgx_thread_cond_t;
 
-#define SGX_THREAD_COND_INITIALIZER  {SGX_THREAD_T_NULL}
+#define SGX_THREAD_COND_INITIALIZER  {0, {SGX_THREAD_T_NULL, SGX_THREAD_T_NULL}}
 
 typedef struct _sgx_thread_cond_attr_t
 {
