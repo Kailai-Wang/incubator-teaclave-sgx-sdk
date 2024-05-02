@@ -15,7 +15,7 @@
 #include "private.h"
 #include "tzfile.h"
 //#include "thread_private.h"
-#include "se_cdefs.h"
+#include "internal/se_cdefs.h"
 
 /*
 ** Some systems only handle "%.2d"; others only handle "%02d";

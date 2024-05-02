@@ -36,11 +36,10 @@
 #include <sys/types.h>
 
 #ifdef _TLIBC_USE_INTEL_FAST_STRING_
-extern uint64_t __intel_cpu_feature_indicator;
 extern void *_intel_fast_memset(void *, void *, size_t);
-#endif
-
+#else
 extern void *__memset(void *dst, int c, size_t n);
+#endif
 
 extern void* __memcpy_verw(void *dst0, const void *src0);
 extern void* __memcpy_8a(void *dst0, const void *src0);
@@ -82,12 +81,8 @@ void *
 memset(void *dst, int c, size_t n)
 {
 #ifdef _TLIBC_USE_INTEL_FAST_STRING_
-	if (__intel_cpu_feature_indicator)
-		return _intel_fast_memset(dst, (void*)c, n);
-	else
-		return __memset(dst, c, n);
+	return _intel_fast_memset(dst, (void*)c, n);
 #else
 	return __memset(dst, c, n);
 #endif /* !_TLIBC_USE_INTEL_FAST_STRING_ */	
 }
-

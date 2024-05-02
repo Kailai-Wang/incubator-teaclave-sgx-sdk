@@ -32,7 +32,7 @@
  */
 
 /* like alloc, but automatic free in return */
-#include "sgx_cet.h"
+#include "linux/sgx_cet.h"
 #define _C_LABEL(x) x
 #ifdef __i386__
 #define _ALIGN_TEXT .align 2, 0x90

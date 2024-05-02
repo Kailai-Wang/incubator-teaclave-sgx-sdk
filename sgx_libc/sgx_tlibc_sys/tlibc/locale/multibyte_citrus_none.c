@@ -38,7 +38,7 @@
 #include <stddef.h>
 #include <wchar.h>
 
-#include "util.h"
+#include "internal/util.h"
 
 size_t mbsnrtowcs(wchar_t *, const char **, size_t, size_t, mbstate_t *);
 size_t wcsnrtombs(char *, const wchar_t **, size_t, size_t, mbstate_t *);

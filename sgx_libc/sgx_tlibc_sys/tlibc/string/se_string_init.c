@@ -34,7 +34,7 @@
 #include "se_cdefs.h"
 
 // add a version to tlibc.
-// SGX_ACCESS_VERSION(tstdc, 1)
+SGX_ACCESS_VERSION(tstdc, 1)
 
 #ifdef _TLIBC_USE_INTEL_FAST_STRING_
 extern uint64_t __intel_cpu_feature_indicator;

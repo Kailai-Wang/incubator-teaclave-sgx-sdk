@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Intel Corporation. All rights reserved.
+ * Copyright (C) 2011-2021 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,13 +29,19 @@
  *
  */
 
-#include "global_data.h"
+#include "se_version.h"
 
-/**
- * In SE, the page size is defined by macro `SE_PAGE_SIZE'.
- */
-int getpagesize(void)
-{
-    return SE_PAGE_SIZE;
+#define __CONCAT(x, y) x/**/y
+
+#define SGX_TSTDC_VERSION_STR  __CONCAT("SGX_TSTDC_VERSION_", STRFILEVER)
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+__attribute__((visibility("default")))
+char  sgx_tstdc_version[] = SGX_TSTDC_VERSION_STR;
+
+#ifdef __cplusplus
 }
-
+#endif

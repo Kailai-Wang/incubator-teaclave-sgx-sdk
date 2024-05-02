@@ -845,8 +845,8 @@ extern "C" {
   void* __attribute__((weak)) calloc(size_t n, size_t size)      ALIAS(dlcalloc);
   void* __attribute__((weak)) memalign(size_t align, size_t s)  ALIAS(dlmemalign); 
   struct mallinfo __attribute__((weak)) mallinfo(void)         ALIAS(dlmallinfo);
+  int __attribute__((weak)) posix_memalign(void** pp, size_t alignment, size_t n) ALIAS(dlposix_memalign);
 #ifdef USE_MALLOC_DEPRECATED
-#define dlposix_memalign       posix_memalign
 #define dlrealloc_in_place     realloc_in_place
 #define dlvalloc               valloc
 #define dlpvalloc              pvalloc
@@ -952,7 +952,6 @@ DLMALLOC_EXPORT void* dlrealloc_in_place(void*, size_t);
 */
 DLMALLOC_EXPORT void* dlmemalign(size_t, size_t);
 
-#ifdef USE_MALLOC_DEPRECATED
 /*
   int posix_memalign(void** pp, size_t alignment, size_t n);
   Allocates a chunk of n bytes, aligned in accord with the alignment
@@ -963,6 +962,7 @@ DLMALLOC_EXPORT void* dlmemalign(size_t, size_t);
 */
 DLMALLOC_EXPORT int dlposix_memalign(void**, size_t, size_t);
 
+#ifdef USE_MALLOC_DEPRECATED
 /*
   valloc(size_t n);
   Equivalent to memalign(pagesize, n), where pagesize is the page
@@ -1586,7 +1586,7 @@ unsigned char _BitScanReverse(unsigned long *index, unsigned long mask);
 #endif /* defined(_MSC_VER) && _MSC_VER>=1300 */
 
 #ifdef _TLIBC_
-#include "arch.h"
+#include "internal/arch.h"
 # define malloc_getpagesize ((size_t)TCS_SIZE)
 #else
 #ifndef WIN32
@@ -3132,10 +3132,9 @@ static size_t traverse_and_check(mstate m);
 
 /* check if allocated memory falls into trusted heap range */
 #ifdef _TLIBC_
-#include "trts_inst.h"
-#include "stdint.h" /* SIZE_MAX */
+#include "trts_util.h"
 #define ok_heap_range(p, b) \
-    (((p) >= sgx_get_heap_base()) && \
+    (((p) >= get_heap_base()) && \
      ((b) <= (SIZE_MAX - (size_t)(p))) && \
      ((void *)((size_t)(p) + (b)) <= sbrk(0)))
 #else
@@ -5336,7 +5335,6 @@ void* dlmemalign(size_t alignment, size_t bytes) {
   return internal_memalign(gm, alignment, bytes);
 }
 
-#ifdef USE_MALLOC_DEPRECATED
 int dlposix_memalign(void** pp, size_t alignment, size_t bytes) {
   void* mem = 0;
   if (alignment == MALLOC_ALIGNMENT)
@@ -5360,6 +5358,7 @@ int dlposix_memalign(void** pp, size_t alignment, size_t bytes) {
   }
 }
 
+#ifdef USE_MALLOC_DEPRECATED
 void* dlvalloc(size_t bytes) {
   size_t pagesz;
   ensure_initialization();

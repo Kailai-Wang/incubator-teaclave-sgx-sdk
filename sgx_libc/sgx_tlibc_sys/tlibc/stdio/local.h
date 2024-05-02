@@ -40,7 +40,7 @@
 #include <wchar.h> 
 #include "wcio.h"
 
-#include "arch.h" /* for SE_PAGE_SIZE */
+#include "internal/arch.h" /* for SE_PAGE_SIZE */
 
 #define FLOATING_POINT      1
 #define PRINTF_WIDE_CHAR    1
