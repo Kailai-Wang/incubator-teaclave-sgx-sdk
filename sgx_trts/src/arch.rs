@@ -17,14 +17,12 @@
 
 #![allow(clippy::enum_variant_names)]
 
-use crate::emm::{self, PageType};
+use crate::edmm::{self, PageType};
 use crate::tcs::tc;
 use crate::version::*;
-use crate::xsave;
 use core::convert::From;
 use core::fmt;
 use core::mem;
-use core::slice;
 use sgx_types::types::{Attributes, ConfigId, Measurement, MiscSelect};
 
 pub const SE_PAGE_SHIFT: usize = 12;
@@ -32,7 +30,6 @@ pub const SE_PAGE_SIZE: usize = 0x1000;
 pub const SE_GUARD_PAGE_SHIFT: usize = 16;
 pub const SE_GUARD_PAGE_SIZE: usize = 0x10000;
 pub const RED_ZONE_SIZE: usize = 128;
-pub const RSVD_SIZE_OF_MITIGATION_STACK_AREA: usize = 15 * 8;
 
 macro_rules! is_page_aligned {
     ($num:expr) => {
@@ -40,22 +37,9 @@ macro_rules! is_page_aligned {
     };
 }
 
-// rounds to up
-macro_rules! round_to {
-    ($num:expr, $align:expr) => {
-        ($num + $align - 1) & (!($align - 1))
-    };
-}
-
 macro_rules! round_to_page {
     ($num:expr) => {
         ($num + crate::arch::SE_PAGE_SIZE - 1) & (!(crate::arch::SE_PAGE_SIZE - 1))
-    };
-}
-
-macro_rules! trim_to {
-    ($num:expr, $align:expr) => {
-        $num & (!($align - 1))
     };
 }
 
@@ -244,20 +228,11 @@ impl fmt::Debug for Secs {
 
 pub const TCS_RESERVED_BYTES: usize = 4024;
 
-impl_bitflags! {
-    #[repr(C)]
-    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-    pub struct TcsFlags: u64 {
-        const DBGOPTIN     = 0x0001;
-        const AEXNOTIFY    = 0x0002;
-    }
-}
-
 impl_copy_clone! {
     #[repr(C, align(4096))]
     pub struct Tcs {
         pub reserved0: u64,
-        pub flags: TcsFlags,
+        pub flags: u64,
         pub ossa: u64,
         pub cssa: u32,
         pub nssa: u32,
@@ -344,17 +319,12 @@ pub struct Tds {
     pub flags: usize,
     pub xsave_size: usize,
     pub last_error: usize,
-    pub aex_mitigation_list: usize,
-    pub aex_notify_flag: usize,
-    pub first_ssa_xsave: usize,
     pub m_next: usize,
     pub tls_addr: usize,
     pub tls_array: usize,
     pub exception_flag: isize,
     pub cxx_thread_info: [usize; 6],
     pub stack_commit: usize,
-    pub aex_notify_entropy_cache: u32,
-    pub aex_notify_entropy_remaining: i32,
     #[cfg(feature = "hyper")]
     pub index: usize,
 }
@@ -388,25 +358,15 @@ impl Tds {
     }
 
     #[inline]
-    pub fn ssa_gpr_mut(&mut self) -> &mut SsaGpr {
+    pub fn ssa_gpr(&mut self) -> &mut SsaGpr {
         unsafe { &mut *(self.first_ssa_gpr as *mut SsaGpr) }
-    }
-
-    #[inline]
-    pub fn ssa_gpr(&self) -> &SsaGpr {
-        unsafe { &*(self.first_ssa_gpr as *const SsaGpr) }
-    }
-
-    #[inline]
-    pub fn xsave_area(&self) -> &[u8] {
-        unsafe { slice::from_raw_parts(self.first_ssa_xsave as *const u8, xsave::xsave_size()) }
     }
 }
 
-pub const TCS_POLICY_BIND: usize = 0x0000_0000; //If set, the TCS is bound to the application thread
+pub const TCS_POLICY_BIND: usize = 0x0000_0000; /* If set, the TCS is bound to the application thread */
 pub const TCS_POLICY_UNBIND: usize = 0x0000_0001;
 
-pub const LAYOUT_ENTRY_NUM: usize = 43;
+pub const LAYOUT_ENTRY_NUM: usize = 42;
 pub const TCS_TEMPLATE_SIZE: usize = 72;
 
 #[repr(C)]
@@ -429,7 +389,6 @@ pub struct Global {
     pub enclave_image_base: u64,
     pub elrange_start_base: u64,
     pub elrange_size: u64,
-    pub edmm_bk_overhead: usize,
 }
 
 #[repr(C, packed)]
@@ -521,7 +480,6 @@ pub const LAYOUT_ID_THREAD_GROUP_DYN: u16 = group_id!(19);
 pub const LAYOUT_ID_RSRV_MIN: u16 = 20;
 pub const LAYOUT_ID_RSRV_INIT: u16 = 21;
 pub const LAYOUT_ID_RSRV_MAX: u16 = 22;
-pub const LAYOUT_ID_USER_REGION: u16 = 23;
 
 // se_page_attr.h
 pub const PAGE_ATTR_EADD: u16 = 1 << 0;
@@ -543,20 +501,20 @@ pub const PAGE_ATTR_MASK: u16 = !(PAGE_ATTR_EADD
 
 // arch.h
 pub const SI_FLAG_NONE: u64 = 0x0;
-pub const SI_FLAG_R: u64 = 0x1; //Read Access
-pub const SI_FLAG_W: u64 = 0x2; //Write Access
-pub const SI_FLAG_X: u64 = 0x4; //Execute Access
-pub const SI_FLAG_PT_LOW_BIT: u64 = 0x8; // PT low bit
-pub const SI_FLAG_PT_MASK: u64 = 0xFF << SI_FLAG_PT_LOW_BIT; //Page Type Mask [15:8]
-pub const SI_FLAG_SECS: u64 = 0x00 << SI_FLAG_PT_LOW_BIT; //SECS
-pub const SI_FLAG_TCS: u64 = 0x01 << SI_FLAG_PT_LOW_BIT; //TCS
-pub const SI_FLAG_REG: u64 = 0x02 << SI_FLAG_PT_LOW_BIT; //Regular Page
-pub const SI_FLAG_TRIM: u64 = 0x04 << SI_FLAG_PT_LOW_BIT; //Trim Page
+pub const SI_FLAG_R: u64 = 0x1; /* Read Access */
+pub const SI_FLAG_W: u64 = 0x2; /* Write Access */
+pub const SI_FLAG_X: u64 = 0x4; /* Execute Access */
+pub const SI_FLAG_PT_LOW_BIT: u64 = 0x8; /* PT low bit */
+pub const SI_FLAG_PT_MASK: u64 = 0xFF << SI_FLAG_PT_LOW_BIT; /* Page Type Mask [15:8] */
+pub const SI_FLAG_SECS: u64 = 0x00 << SI_FLAG_PT_LOW_BIT; /* SECS */
+pub const SI_FLAG_TCS: u64 = 0x01 << SI_FLAG_PT_LOW_BIT; /* TCS */
+pub const SI_FLAG_REG: u64 = 0x02 << SI_FLAG_PT_LOW_BIT; /* Regular Page */
+pub const SI_FLAG_TRIM: u64 = 0x04 << SI_FLAG_PT_LOW_BIT; /* Trim Page */
 pub const SI_FLAG_PENDING: u64 = 0x8;
 pub const SI_FLAG_MODIFIED: u64 = 0x10;
 pub const SI_FLAG_PR: u64 = 0x20;
 
-pub const SI_FLAGS_EXTERNAL: u64 = SI_FLAG_PT_MASK | SI_FLAG_R | SI_FLAG_W | SI_FLAG_X; //Flags visible/usable by instructions
+pub const SI_FLAGS_EXTERNAL: u64 = SI_FLAG_PT_MASK | SI_FLAG_R | SI_FLAG_W | SI_FLAG_X; /* Flags visible/usable by instructions */
 pub const SI_FLAGS_R: u64 = SI_FLAG_R | SI_FLAG_REG;
 pub const SI_FLAGS_RW: u64 = SI_FLAG_R | SI_FLAG_W | SI_FLAG_REG;
 pub const SI_FLAGS_RX: u64 = SI_FLAG_R | SI_FLAG_X | SI_FLAG_REG;
@@ -565,14 +523,6 @@ pub const SI_FLAGS_TCS: u64 = SI_FLAG_TCS;
 pub const SI_FLAGS_SECS: u64 = SI_FLAG_SECS;
 pub const SI_MASK_TCS: u64 = SI_FLAG_PT_MASK;
 pub const SI_MASK_MEM_ATTRIBUTE: u64 = 0x7;
-
-pub const SGX_EMA_PROT_NONE: u64 = 0x0;
-pub const SGX_EMA_PROT_READ: u64 = 0x1;
-pub const SGX_EMA_PROT_WRITE: u64 = 0x2;
-pub const SGX_EMA_PROT_EXEC: u64 = 0x4;
-pub const SGX_EMA_PROT_READ_WRITE: u64 = SGX_EMA_PROT_READ | SGX_EMA_PROT_WRITE;
-pub const SGX_EMA_PROT_READ_EXEC: u64 = SGX_EMA_PROT_READ | SGX_EMA_PROT_EXEC;
-pub const SGX_EMA_PROT_READ_WRITE_EXEC: u64 = SGX_EMA_PROT_READ_WRITE | SGX_EMA_PROT_EXEC;
 
 #[repr(C, packed)]
 #[derive(Clone, Copy)]
@@ -625,36 +575,9 @@ pub struct SsaGpr {
     pub rsp_u: u64,          /* (144) untrusted stack pointer. saved by EENTER */
     pub rbp_u: u64,          /* (152) untrusted frame pointer. saved by EENTE */
     pub exit_info: ExitInfo, /* (160) contain information for exits  */
-    pub reserved: [u8; 3],   /* (164) padding */
-    pub aex_notify: u8,      /* (167) AEX Notify */
+    pub reserved: u32,       /* (164) padding to multiple of 8 bytes */
     pub fs: u64,             /* (168) FS register */
     pub gs: u64,             /* (176) GS register */
-}
-
-impl SsaGpr {
-    pub const BYTE_SIZE: usize = mem::size_of::<SsaGpr>();
-}
-
-#[repr(C, packed)]
-#[derive(Clone, Copy, Debug)]
-pub struct MiscExInfo {
-    pub maddr: u64,
-    pub error_code: u32,
-    pub reserved: u32,
-}
-
-impl MiscExInfo {
-    pub const BYTE_SIZE: usize = mem::size_of::<MiscExInfo>();
-
-    #[inline]
-    pub fn from_ssa_gpr(ssa_gpr: &SsaGpr) -> &MiscExInfo {
-        unsafe { &*((ssa_gpr as *const _ as usize - Self::BYTE_SIZE) as *const MiscExInfo) }
-    }
-
-    #[inline]
-    pub fn from_ssa_gpr_mut(ssa_gpr: &mut SsaGpr) -> &mut MiscExInfo {
-        unsafe { &mut *((ssa_gpr as *mut _ as usize - Self::BYTE_SIZE) as *mut MiscExInfo) }
-    }
 }
 
 #[repr(C, packed)]
@@ -744,11 +667,11 @@ impl From<PageType> for SecInfoFlags {
     }
 }
 
-impl From<emm::PageInfo> for SecInfoFlags {
-    fn from(data: emm::PageInfo) -> SecInfoFlags {
+impl From<edmm::PageInfo> for SecInfoFlags {
+    fn from(data: edmm::PageInfo) -> SecInfoFlags {
         let typ = data.typ as u64;
-        let prot = data.prot.bits() as u64;
-        SecInfoFlags::from_bits_truncate((typ << 8) | prot)
+        let flags = data.flags.bits() as u64;
+        SecInfoFlags::from_bits_truncate((typ << 8) | flags)
     }
 }
 
@@ -807,33 +730,33 @@ impl From<SecInfoFlags> for SecInfo {
     }
 }
 
-impl From<emm::PageInfo> for SecInfo {
-    fn from(data: emm::PageInfo) -> SecInfo {
+impl From<edmm::PageInfo> for SecInfo {
+    fn from(data: edmm::PageInfo) -> SecInfo {
         SecInfo::from(SecInfoFlags::from(data))
     }
 }
 
 #[repr(C, align(32))]
 #[derive(Clone, Copy, Debug)]
-pub struct CPageInfo {
+pub struct PageInfo {
     pub linaddr: u64,
     pub srcpage: u64,
     pub secinfo: u64,
     pub secs: u64,
 }
 
-impl CPageInfo {
-    pub const ALIGN_SIZE: usize = mem::size_of::<CPageInfo>();
+impl PageInfo {
+    pub const ALIGN_SIZE: usize = mem::size_of::<PageInfo>();
 }
 
-impl AsRef<[u8; CPageInfo::ALIGN_SIZE]> for CPageInfo {
-    fn as_ref(&self) -> &[u8; CPageInfo::ALIGN_SIZE] {
+impl AsRef<[u8; PageInfo::ALIGN_SIZE]> for PageInfo {
+    fn as_ref(&self) -> &[u8; PageInfo::ALIGN_SIZE] {
         unsafe { &*(self as *const _ as *const _) }
     }
 }
 
-impl AsRef<Align32<[u8; CPageInfo::ALIGN_SIZE]>> for CPageInfo {
-    fn as_ref(&self) -> &Align32<[u8; CPageInfo::ALIGN_SIZE]> {
+impl AsRef<Align32<[u8; PageInfo::ALIGN_SIZE]>> for PageInfo {
+    fn as_ref(&self) -> &Align32<[u8; PageInfo::ALIGN_SIZE]> {
         unsafe { &*(self as *const _ as *const _) }
     }
 }
