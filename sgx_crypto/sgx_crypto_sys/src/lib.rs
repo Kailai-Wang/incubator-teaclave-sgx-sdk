@@ -21,7 +21,7 @@
 //! It includes the cryptographic functions used by other trusted libraries included in the SDK
 //!
 
-#![no_std]
+// #![no_std]
 #![cfg_attr(target_vendor = "teaclave", feature(rustc_private))]
 
 extern crate sgx_types;
