@@ -653,6 +653,7 @@ mod rand {
     /// # Safety
     #[no_mangle]
     pub unsafe extern "C" fn sgx_read_rand(p: *mut u8, len: usize) -> u32 {
+        println!("enter read_rand");
         if p.is_null() || len == 0 {
             return SgxStatus::InvalidParameter.into();
         }
@@ -660,7 +661,10 @@ mod rand {
         let buf = slice::from_raw_parts_mut(p, len);
         match rand(buf) {
             Ok(_) => SgxStatus::Success.into(),
-            Err(e) => e.into(),
+            Err(e) => {
+                println!("error is {:?}", e);
+                e.into()
+            },
         }
     }
 
