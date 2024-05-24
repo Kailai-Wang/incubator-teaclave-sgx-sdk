@@ -13,6 +13,8 @@ default = []
 [target.'cfg(not(target_env = "sgx"))'.dependencies]
 sgx_types = { git = "https://github.com/apache/teaclave-sgx-sdk.git" }
 sgx_tstd = { git = "https://github.com/apache/teaclave-sgx-sdk.git" }
+musig2 = { git = "https://github.com/kailai-wang/musig2.git", branch = "kai", features = ["k256"] }
+k256 = { version = "0.13.3", default-features = false, features = ["ecdsa-core", "schnorr", "alloc"] }
 
 [patch.'https://github.com/apache/teaclave-sgx-sdk.git']
 sgx_align_struct_attribute = { path = "../../../sgx_align_struct_attribute" }
