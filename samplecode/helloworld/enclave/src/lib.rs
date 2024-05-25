@@ -20,9 +20,9 @@
 #![cfg_attr(not(target_env = "sgx"), no_std)]
 #![cfg_attr(target_env = "sgx", feature(rustc_private))]
 
+extern crate sgx_types;
 extern crate k256;
 extern crate musig2;
-extern crate sgx_types;
 
 #[cfg(not(target_env = "sgx"))]
 #[macro_use]
@@ -34,7 +34,7 @@ use std::string::String;
 use std::vec::Vec;
 
 use k256::schnorr::SigningKey;
-use musig2::k256::PublicKey;
+use k256::PublicKey;
 use musig2::KeyAggContext;
 use std::vec;
 
@@ -61,6 +61,22 @@ fn signer2_priv_key() -> SigningKey {
     ])
     .unwrap()
 }
+
+// use sha2::Digest as _;
+// use sha2_v08_wrapper::Digest as _;
+
+// fn sha2_v10() -> sha2::Sha256 {
+//     sha2::Sha256::new()
+//         .chain_update(b"hello world")
+//         .chain_update(b"hello world")
+// }
+
+// fn sha2_v8() -> sha2_v08_wrapper::Sha256 {
+//     let mut hasher = sha2_v08_wrapper::Sha256::new();
+//     hasher.input(b"hello world");
+//     hasher.input(b"hello world");
+//     hasher
+// }
 
 /// A function simply invokes ocall print to print the incoming string
 ///
@@ -89,7 +105,14 @@ pub extern "C" fn say_something(some_string: *const u8, some_len: usize) -> sgx_
 
     println!("before calling Context::new");
 
-    let _ = KeyAggContext::new(pubkeys).expect("error aggregating pubkeys");
+    let _ = KeyAggContext::new(pubkeys).unwrap();
+
+    // let a = sha2_v10().finalize();
+    // let b = sha2_v8().result();
+    // assert_eq!(a.to_vec(), b.to_vec());
+
+    // println!("assert passed");
+
     let str_slice = unsafe { slice::from_raw_parts(some_string, some_len) };
     let _ = io::stdout().write(str_slice);
 
